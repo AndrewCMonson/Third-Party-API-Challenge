@@ -2,14 +2,6 @@
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
 $(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
-
   // function used to grab a stored array from local storage
   // can be used for any stored array and it will parse
   const getStoredArr = (localStorageArr) => JSON.parse(localStorage.getItem(localStorageArr));
@@ -48,9 +40,6 @@ $(function () {
   */
   $('.time-block').on('click', '.saveBtn', e => {
       e.preventDefault()
-      console.log('>>>description value>>>', $(e.target).siblings('.description').val());
-      // console.log($(e.target).siblings('.hour').text())
-
       // grabs the hour value from the DOM, finds the first number in the string and converts it to an integer
       const hour = $(e.target).siblings('.hour').text();
       const trueHour = hour.match(/[0-9]+/);
@@ -65,25 +54,45 @@ $(function () {
         textInput: userInputValue
       }
       storedInputs.push(savedInput);
-      
-      // localStorage.setItem('Stored Inputs', JSON.stringify(storedInputs));
       updateDailyVals(storedInputs);
-
     })
     
-    
-    
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
+    /*
+      - determineTime is run on page load and takes no arguments
+      - it initializes dayjs and formats it into a 24 hour clock
+      - next, the function gathers all of the timeblocks from the DOM via jQuery
+      - next, it gathers the id from each time block and converts it to an integer
+      - next, it compares the integer to the current hour of dayjs
+      - if the current hour is greater than the hour on the time block, it adds the '.past' class turning the block grey.
+      - if the current hour is less than the hour on the time block, it add the '.future' class and turns the block green
+      - if the hours match, the block is turned red
+    */
     const determineTime = () => {
-      const hour = $(e.target).siblings('.hour').text();
-      const trueHour = hour.match(/[0-9]+/);
-      const trueHourValue = parseInt(trueHour);
+      // const hour = $(e.target).siblings('.hour').text();
+      // const trueHour = hour.match(/[0-9]+/);
+      // const trueHourValue = parseInt(trueHour);
+      const now = dayjs().format('H');
+      console.log(now)
+      const timeBlocks = $('.time-block');
+      console.log(timeBlocks);
+
+      for(let i = 0; i < timeBlocks.length; i++){
+        const currentTimeBlock = timeBlocks[i];
+        const hour = currentTimeBlock.id;
+        const trueHour = hour.match(/[0-9]+/);
+        const trueHourValue = parseInt(trueHour);
+
+        if(trueHourValue < now){
+          $(currentTimeBlock).addClass('past');
+        }else if(trueHourValue > now){
+          $(currentTimeBlock).addClass('future')
+        }else{
+          $(currentTimeBlock).addClass('present')
+        }
+      }
     }
+
+    determineTime();
   // TODO: Add code to get any user input that was saved in localStorage and set
   // the values of the corresponding textarea elements. HINT: How can the id
   // attribute of each time-block be used to do this?
@@ -91,8 +100,9 @@ $(function () {
     const getInput = () => {
 
     }
-  // TODO: Add code to display the current date in the header of the page.
 
+    
+    // This displays the current time on the page and updates every second
     const displayTime = () => {
       const now = dayjs().format('MM/DD/YYYY HH:MM:ss');
       const timeDisplay = $('#currentDay');
