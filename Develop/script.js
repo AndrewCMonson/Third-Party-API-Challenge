@@ -10,25 +10,46 @@ $(function () {
   // useful when saving the description in local storage?
   //
 
-  const getStorage = () => JSON.parse(localStorage.getItem('Stored Inputs'));
+  // function used to grab a stored array from local storage
+  // can be used for any stored array and it will parse
+  const getStoredArr = (localStorageArr) => JSON.parse(localStorage.getItem(localStorageArr));
   
-  const updateStorage = (arr) => {
-    const storedArr = getStorage();
-    console.log(storedArr);
+  /*
+    - This function takes an array that has only one object as argument
+    - If there is not an array stored in local storage, it creates one based on the passed array
+    - If there is an array stored, it pulls a stored array from localStorage via the getStoredArr function
+    - After pulling the array from LS, it checks if there is already an object in the array that matches the new one
+    - If there is an existing object, it updates the values
+    - If there is no object, it pushes the new arr to the stored arr
+    - Finally, it sets the LS with the new values
+  */
+  const updateDailyVals = (arr) => {
+    const storedInputsStr = 'Stored Inputs'
+    const storedArr = getStoredArr(storedInputsStr);
+    const newInput = arr[0];
     if(!storedArr){
-      localStorage.setItem('Stored Inputs', JSON.stringify(arr))
-    }if(storedArr){
-      const newStoredArr = [...storedArr, arr];
-      localStorage.setItem('Stored Inputs', JSON.stringify(newStoredArr))
+      localStorage.setItem(storedInputsStr, JSON.stringify(arr))
     }
-
+    if(storedArr){
+      const a = storedArr.findIndex(e => e.hour === newInput.hour);
+      if(a > -1){
+        storedArr[a] = newInput;
+      }else{
+        storedArr.push(newInput)
+      }
+      localStorage.setItem(storedInputsStr, JSON.stringify(storedArr))
+    }
   }
 
-
+  /*
+    - This event listener uses a click on the '.saveBtn" class of buttons to save the value of the '.description' class and the hour it belongs to, into an object. 
+    - After the object is created, it is pushed into an array
+    - Finally, the created array of objects is passed as an argument into the updateDailyVals function which updates LS.
+  */
   $('.time-block').on('click', '.saveBtn', e => {
       e.preventDefault()
-      console.log('description value', $(e.target).siblings('.description').val());
-      console.log($(e.target).siblings('.hour').text())
+      console.log('>>>description value>>>', $(e.target).siblings('.description').val());
+      // console.log($(e.target).siblings('.hour').text())
 
       // grabs the hour value from the DOM, finds the first number in the string and converts it to an integer
       const hour = $(e.target).siblings('.hour').text();
@@ -44,9 +65,9 @@ $(function () {
         textInput: userInputValue
       }
       storedInputs.push(savedInput);
-
+      
       // localStorage.setItem('Stored Inputs', JSON.stringify(storedInputs));
-      updateStorage(storedInputs);
+      updateDailyVals(storedInputs);
 
     })
     
