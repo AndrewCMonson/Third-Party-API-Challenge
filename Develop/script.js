@@ -1,6 +1,3 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
 $(function () {
   // function used to grab a stored array from local storage
   // can be used for any stored array and it will parse
@@ -38,15 +35,11 @@ $(function () {
   */
   const captureInput = (e) => {
     e.preventDefault()
-    // grabs the hour value from the DOM, finds the first number in the string and converts it to an integer
     const hour = $(e.target).siblings('.hour').text();
     const trueHour = hour.match(/[0-9]+/);
     const trueHourValue = parseInt(trueHour);
-    // grabs the user input from the DOM and stores it in a variable
     const userInputValue = $(e.target).siblings('.description').val();
-    // array to store inputs from the user
     const storedInputs = [];
-    // inputs from the user placed into an object
     const savedInput = {
       hour: trueHourValue,
       textInput: userInputValue
@@ -66,14 +59,9 @@ $(function () {
     - if the hours match, the block is turned red
   */
   const determineTime = () => {
-    // const hour = $(e.target).siblings('.hour').text();
-    // const trueHour = hour.match(/[0-9]+/);
-    // const trueHourValue = parseInt(trueHour);
     const now = dayjs().format('H');
-    console.log(now)
     const timeBlocks = $('.time-block');
-    console.log(timeBlocks);
-
+    
     for(let i = 0; i < timeBlocks.length; i++){
       const currentTimeBlock = timeBlocks[i];
       const hour = currentTimeBlock.id;
@@ -90,23 +78,48 @@ $(function () {
     }
   }
 
-    determineTime();
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-    const updateDom = () => {
+  /*
+    - publishInputs function is called on page load and takes no arguments
+    - it utilizes the getStoredArr function to gather stored information from localStorage
+    - it also grabs all of the '.time-block' class elements from the DOM via jQuery
+    - Inside of publishInputs, there is a function called compareArrs. This function is built to explicitly take the two arrays of 'timeBlocksArr' and 'localStoredArr'. It loops through them and compares values of the 'timeBlocksArr' index 'id' property and the 'localStoredArr' index hour property to determine if they match. If they do, it manipulates the DOM to display the correct stored 'textInput' value
+    - Finally, the compareArrs function is called within the publishInputs function, publishing the stored items to the page.
+  */  
+  const publishInputs = () => {
+    const timeBlocksArr = $('.time-block');
+    const storedInputsStr = 'Stored Inputs'
+    const localStoredArr = getStoredArr(storedInputsStr);
 
+    const compareArrs = (timeBlocks, storedArr) => {
+      for(let i = 0; i < timeBlocks.length; i++){
+        const currentTimeBlock = timeBlocks[i];
+        const hour = currentTimeBlock.id;
+        const trueHour = hour.match(/[0-9]+/);
+        const trueHourValue = parseInt(trueHour);
+        for(let j = 0; j < storedArr.length; j++){
+          const currentStoredArrIndex = storedArr[j];
+          if(trueHourValue === currentStoredArrIndex.hour){
+            $(currentTimeBlock).children('.description').val(currentStoredArrIndex.textInput)
+          }
+        } 
+      }
     }
+    compareArrs(timeBlocksArr, localStoredArr);
+  }
+
+  // This formats the current time and displays it on the page
+  const displayTime = () => {
+    const now = dayjs().format('MM/DD/YYYY HH:MM:ss');
+    const timeDisplay = $('#currentDay');
+    timeDisplay.text(now); 
+  }
 
 
-    // This displays the current time on the page and updates every second
-    const displayTime = () => {
-      const now = dayjs().format('MM/DD/YYYY HH:MM:ss');
-      const timeDisplay = $('#currentDay');
-      timeDisplay.text(now); 
-    }
 
+
+    // final functions run to complete application
     setInterval(displayTime, 1000);
+    determineTime();
     $('.time-block').on('click', '.saveBtn', captureInput)
+    publishInputs();
 });
