@@ -1,5 +1,5 @@
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
 }
 
@@ -36,7 +36,7 @@ textarea {
 }
 
 .present {
-  background-color: #ff6961;
+  background-color: #f8aa01;
   color: white;
 }
 
@@ -53,8 +53,11 @@ textarea {
   color: white;
 }
 
+.saveBtn i{
+  pointer-events: none;
+}
+
 .saveBtn i:hover {
   font-size: 20px;
   transition: all 0.3s ease-in-out;
-  pointer-events: none;
 }

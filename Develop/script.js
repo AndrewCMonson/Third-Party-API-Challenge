@@ -1,7 +1,22 @@
 $(function () {
-  // function used to grab a stored array from local storage
+  
+  // getStoredArr is a function used to grab a stored array from local storage
   // can be used for any stored array and it will parse
   const getStoredArr = (localStorageArr) => JSON.parse(localStorage.getItem(localStorageArr));
+
+  const initalizeStorage = () => {
+    const storedInputsStr = 'Stored Inputs';
+    localStorage.removeItem(storedInputsStr);
+  }
+  
+  const clearTextContent = () => {
+    const timeBlocks = $('.time-block');
+
+    for(let i = 0; i < timeBlocks.length; i++){
+      const currentTimeBlock = timeBlocks[i];
+      $(currentTimeBlock).children('.description').val('')
+    }
+  }
   /*
     - This function takes an array that has only one object as argument
     - If there is not an array stored in local storage, it creates one based on the passed array
@@ -12,10 +27,11 @@ $(function () {
     - Finally, it sets the LS with the new values
   */
   const updateDailyVals = (arr) => {
-    const storedInputsStr = 'Stored Inputs'
+    const storedInputsStr = 'Stored Inputs';
     const storedArr = getStoredArr(storedInputsStr);
     const newInput = arr[0];
     if(!storedArr){
+      initalizeStorage();
       localStorage.setItem(storedInputsStr, JSON.stringify(arr))
     }
     if(storedArr){
@@ -96,12 +112,14 @@ $(function () {
         const hour = currentTimeBlock.id;
         const trueHour = hour.match(/[0-9]+/);
         const trueHourValue = parseInt(trueHour);
-        for(let j = 0; j < storedArr.length; j++){
+        if(storedArr){
+          for(let j = 0; j < storedArr.length; j++){
           const currentStoredArrIndex = storedArr[j];
           if(trueHourValue === currentStoredArrIndex.hour){
             $(currentTimeBlock).children('.description').val(currentStoredArrIndex.textInput)
           }
-        } 
+        } }
+        
       }
     }
     compareArrs(timeBlocksArr, localStoredArr);
@@ -111,7 +129,7 @@ $(function () {
   const displayTime = () => {
     const now = dayjs().format('MM/DD/YYYY HH:MM:ss');
     const timeDisplay = $('#currentDay');
-    timeDisplay.text(now); 
+    timeDisplay.text(`Date and Time: ${now}`); 
   }
 
 
@@ -120,6 +138,16 @@ $(function () {
     // final functions run to complete application
     setInterval(displayTime, 1000);
     determineTime();
-    $('.time-block').on('click', '.saveBtn', captureInput)
+    $('.time-block').on('click', '.saveBtn', captureInput);
+    $('#reset-btn').click(initalizeStorage).click(clearTextContent);
+    
+    
+    
+    // on('click', e =>{
+    //   initalizeStorage;
+    //   clearTextContent;
+    // } );
     publishInputs();
 });
+
+
