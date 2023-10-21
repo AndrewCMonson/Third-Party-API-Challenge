@@ -1,20 +1,30 @@
 $(function () {
+  // GLOBAL VARIABLES
+  const storedInputsStr = 'Stored Inputs';
   
-  // getStoredArr is a function used to grab a stored array from local storage
-  // can be used for any stored array and it will parse
+  
+  
+  /*
+    - getStoredArr is a function used to grab a stored array from local storage
+    - can be used for any stored array and it will parse
+  */ 
   const getStoredArr = (localStorageArr) => JSON.parse(localStorage.getItem(localStorageArr));
-
-  const initalizeStorage = () => {
-    const storedInputsStr = 'Stored Inputs';
-    localStorage.removeItem(storedInputsStr);
+  /*
+    - initializeStorage takes a local storage key that has been converted to a variable and removes it from local storage
+  */
+  const initalizeStorage = (storageName) => {
+    localStorage.removeItem(storageName);
   }
   
+  /*
+    - clearTextContent iterates through all '.time-block' class elements and resets the text to an empty string
+    - this could be re-purposed to pass a single text block through and used with a reset button for individual elements in the future
+  */
   const clearTextContent = () => {
     const timeBlocks = $('.time-block');
-
     for(let i = 0; i < timeBlocks.length; i++){
       const currentTimeBlock = timeBlocks[i];
-      $(currentTimeBlock).children('.description').val('')
+      $(currentTimeBlock).children('.description').val('');
     }
   }
   /*
@@ -27,21 +37,21 @@ $(function () {
     - Finally, it sets the LS with the new values
   */
   const updateDailyVals = (arr) => {
-    const storedInputsStr = 'Stored Inputs';
-    const storedArr = getStoredArr(storedInputsStr);
+    
+    const localStoredArr = getStoredArr(storedInputsStr);
     const newInput = arr[0];
-    if(!storedArr){
+    if(!localStoredArr){
       initalizeStorage();
       localStorage.setItem(storedInputsStr, JSON.stringify(arr))
     }
-    if(storedArr){
-      const a = storedArr.findIndex(e => e.hour === newInput.hour);
+    if(localStoredArr){
+      const a = localStoredArr.findIndex(e => e.hour === newInput.hour);
       if(a > -1){
-        storedArr[a] = newInput;
+        localStoredArr[a] = newInput;
       }else{
-        storedArr.push(newInput)
+        localStoredArr.push(newInput)
       }
-      localStorage.setItem(storedInputsStr, JSON.stringify(storedArr))
+      localStorage.setItem(storedInputsStr, JSON.stringify(localStoredArr))
     }
   }
   /*
@@ -103,18 +113,17 @@ $(function () {
   */  
   const publishInputs = () => {
     const timeBlocksArr = $('.time-block');
-    const storedInputsStr = 'Stored Inputs'
     const localStoredArr = getStoredArr(storedInputsStr);
 
-    const compareArrs = (timeBlocks, storedArr) => {
+    const compareArrs = (timeBlocks, localStoredArr) => {
       for(let i = 0; i < timeBlocks.length; i++){
         const currentTimeBlock = timeBlocks[i];
         const hour = currentTimeBlock.id;
         const trueHour = hour.match(/[0-9]+/);
         const trueHourValue = parseInt(trueHour);
-        if(storedArr){
-          for(let j = 0; j < storedArr.length; j++){
-          const currentStoredArrIndex = storedArr[j];
+        if(localStoredArr){
+          for(let j = 0; j < localStoredArr.length; j++){
+          const currentStoredArrIndex = localStoredArr[j];
           if(trueHourValue === currentStoredArrIndex.hour){
             $(currentTimeBlock).children('.description').val(currentStoredArrIndex.textInput)
           }
@@ -135,18 +144,24 @@ $(function () {
 
 
 
-    // final functions run to complete application
+    // FINAL FUNCTION CALLS FOR APPLICATION
+    
+    
+    // used to live update the time and date
     setInterval(displayTime, 1000);
+    
+    // used to color the '.time-block' elements on page load
     determineTime();
+
+    // used to capture the input of '.time-block' text-areas and push to local storage
     $('.time-block').on('click', '.saveBtn', captureInput);
-    $('#reset-btn').click(initalizeStorage).click(clearTextContent);
     
+    // reset button functionality to empty local storage specific to 'Stored Inputs' and clear all text content
+    $('#reset-btn').click(() => {
+      initalizeStorage(storedInputsStr)}
+      ).click(clearTextContent);
     
-    
-    // on('click', e =>{
-    //   initalizeStorage;
-    //   clearTextContent;
-    // } );
+    // used to publish text inputs from local storage on page load
     publishInputs();
 });
 
