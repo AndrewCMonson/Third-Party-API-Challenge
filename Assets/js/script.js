@@ -1,9 +1,6 @@
 $(function () {
   // GLOBAL VARIABLES
   const storedInputsStr = 'Stored Inputs';
-  
-  
-  
   /*
     - getStoredArr is a function used to grab a stored array from local storage
     - can be used for any stored array and it will parse
@@ -37,7 +34,6 @@ $(function () {
     - Finally, it sets the LS with the new values
   */
   const updateDailyVals = (arr) => {
-    
     const localStoredArr = getStoredArr(storedInputsStr);
     const newInput = arr[0];
     if(!localStoredArr){
@@ -128,7 +124,6 @@ $(function () {
             $(currentTimeBlock).children('.description').val(currentStoredArrIndex.textInput)
           }
         } }
-        
       }
     }
     compareArrs(timeBlocksArr, localStoredArr);
