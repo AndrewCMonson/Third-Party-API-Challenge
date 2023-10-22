@@ -81,7 +81,7 @@ $(function () {
     - if the hours match, the block is turned red
   */
   const determineTime = () => {
-    const now = 12;
+    const now = dayjs().format('H');
     const timeBlocks = $('.time-block');
     
     for(let i = 0; i < timeBlocks.length; i++){
