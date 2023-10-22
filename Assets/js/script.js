@@ -73,7 +73,7 @@ $(function () {
   /*
     - determineTime is run on page load and takes no arguments
     - it initializes dayjs and formats it into a 24 hour clock
-    - next, the function gathers all of the timeblocks from the DOM via jQuery
+    - next, the function gathers all of the timeblocks from the DOM 
     - next, it gathers the id from each time block and converts it to an integer
     - next, it compares the integer to the current hour of dayjs
     - if the current hour is greater than the hour on the time block, it adds the '.past' class turning the block grey.
