@@ -29,5 +29,10 @@ WHEN I refresh the page
 THEN the saved events persist
 ```
 ## Screenshots
-
+![Screen presented upon page load](<Assets/Resources/Third-Party-API SS 1.png>)
+![Screenshot showcasing time blocks and coloring by the hour](<Assets/Resources/Third-Party-API SS 2.png>)
+![Screenshot showing text](<Assets/Resources/Third-Party-API SS 3.png>)
 ## Instructions
+You can access this application here: https://andrewcmonson.github.io/Third-Party-API-Challenge/
+
+This is intended to be used as a daily calendar that persists and tracks time through your workday. As of release, you can only reset the entire calendar at once, not individual time blocks. This may be implemented in the future if revisited.
